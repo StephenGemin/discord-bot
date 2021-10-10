@@ -1,4 +1,3 @@
-import logging
 import json
 import random
 import re
@@ -8,8 +7,7 @@ import requests
 
 import constants
 import models
-
-logging.basicConfig(level=logging.INFO)
+from discord_bot import logger
 
 
 def _get_token() -> str:
@@ -26,11 +24,11 @@ def get_inspirational_quote() -> str:
 
 def needs_encouragement(session, message) -> bool:
     filtered = re.sub(r"[^\w\s]", "", message)
-    logging.info(f"Filtered message: {filtered}")
+    logger.info(f"Filtered message: {filtered}")
     query = session.query(models.SadTrigger.word).all()
     sad_words = [w[0] for w in query]
     match = any(word in filtered for word in sad_words)
-    logging.info(f"Match: {match}")
+    logger.info(f"Match: {match}")
     return match
 
 
@@ -41,8 +39,8 @@ def trigger_events(client, db_session):
 
     @client.event
     async def on_message(message):
-        logging.debug(f"New message: {message}")
-        logging.info(f"New message: {message.content}")
+        logger.debug(f"New message: {message}")
+        logger.info(f"New message: {message.content}")
         if message.author == client.user:
             return
 
