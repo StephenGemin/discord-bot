@@ -1,6 +1,7 @@
 import json
 import random
 import re
+from typing import List
 
 import discord
 import requests
@@ -22,14 +23,23 @@ def get_inspirational_quote() -> str:
     return f"{json_data['q']}\n\t{json_data['a']}"
 
 
-def needs_encouragement(session, message) -> bool:
+def needs_encouragement(message: str, session) -> bool:
     filtered = re.sub(r"[^\w\s]", "", message)
     logger.info(f"Filtered message: {filtered}")
-    query = session.query(models.SadTrigger.word).all()
-    sad_words = [w[0] for w in query]
-    match = any(word in filtered for word in sad_words)
+    trigger_words = query_sad_words(session)
+    match = any(word in filtered for word in trigger_words)
     logger.info(f"Match: {match}")
     return match
+
+
+def query_sad_words(session) -> List[str]:
+    query = session.query(models.SadTrigger.word).all()
+    return [w[0] for w in query]
+
+
+def query_encourage_words(session) -> List[str]:
+    query = session.query(models.SadResponse.response).all()
+    return [w[0] for w in query]
 
 
 def trigger_events(client, db_session):
@@ -53,9 +63,8 @@ def trigger_events(client, db_session):
             quote = get_inspirational_quote()
             await message.channel.send(quote)
 
-        if needs_encouragement(db_session, msg):
-            query = db_session.query(models.SadResponse.response).all()
-            encourage_responses = [w[0] for w in query]
+        if needs_encouragement(msg, db_session):
+            encourage_responses = query_encourage_words(db_session)
             await message.channel.send(random.choice(encourage_responses))
 
 
