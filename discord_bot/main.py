@@ -56,10 +56,10 @@ def trigger_events(client, db_session):
 
         msg = message.content
 
-        if re.match(r"\$.hello", msg, flags=re.IGNORECASE):
+        if re.match(r"\$hello", msg, flags=re.IGNORECASE):
             await message.channel.send("Hello, how are you today?")
 
-        if re.match(r"\$.inspire", msg, flags=re.IGNORECASE):
+        if re.match(r"\$inspire", msg, flags=re.IGNORECASE):
             quote = get_inspirational_quote()
             await message.channel.send(quote)
 
