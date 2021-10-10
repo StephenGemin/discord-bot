@@ -13,8 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def _get_token() -> str:
-    env_file = constants.ENV_DIR.joinpath(".env.json")
-    with open(str(env_file), "r") as f_env:
+    with open(str(constants.ENV_FILE), "r") as f_env:
         contents = json.load(f_env)
         return contents["BOT_TOKEN"]
 
