@@ -1,11 +1,13 @@
+import logging
 from importlib import resources
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, create_engine
-from sqlalchemy.orm import relationship, backref, session, sessionmaker
+from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-import constants
+from . import constants
 
+logger = logging.getLogger(__name__)
 Base = declarative_base()
 
 
@@ -22,6 +24,7 @@ class SadResponse(Base):
 
 
 def load_db():
+    logging.info(f"{constants.APP_NAME}")
     with resources.path(f"{constants.APP_NAME}.data", constants.DB_NAME) as db_file:
         engine = create_engine(f"sqlite:///{db_file}")
     Session = sessionmaker()

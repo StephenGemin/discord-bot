@@ -1,3 +1,4 @@
+import logging
 import json
 import random
 import re
@@ -6,9 +7,10 @@ from typing import List
 import discord
 import requests
 
-import constants
-import models
-from discord_bot import logger
+from . import constants
+from . import models
+
+logger = logging.getLogger(__name__)
 
 
 def _get_token() -> str:
@@ -68,12 +70,8 @@ def trigger_events(client, db_session):
             await message.channel.send(random.choice(encourage_responses))
 
 
-def main():
+def start_discord_bot():
     client = discord.Client()
     db_session = models.load_db()
     trigger_events(client, db_session)
     client.run(_get_token())
-
-
-if __name__ == "__main__":
-    main()
